@@ -9,9 +9,7 @@ MODEL = "mistral"
 LAMBDA = 0.1
 N_TRIALS = 3
 
-# -------------------------
-# LLaMA CALL
-# -------------------------
+
 
 def llama_generate(prompt):
 
@@ -22,9 +20,6 @@ def llama_generate(prompt):
 
     return response["message"]["content"].strip()
 
-# -------------------------
-# COMPRESSOR
-# -------------------------
 
 def compress_prompt(text, ratio, style, template):
 
@@ -41,9 +36,7 @@ Text:
 
     return llama_generate(prompt)
 
-# -------------------------
-# CLASSIFIER
-# -------------------------
+
 
 def classify(text):
 
@@ -59,9 +52,7 @@ Answer only label.
 
     return llama_generate(prompt)
 
-# -------------------------
-# BASELINE
-# -------------------------
+
 
 print("Computing baseline...")
 
@@ -76,9 +67,7 @@ baseline_acc = accuracy_score(true_labels, baseline_preds)
 
 print("Baseline Accuracy:", baseline_acc)
 
-# -------------------------
-# OBJECTIVE FUNCTION
-# -------------------------
+
 
 def objective(trial):
 
@@ -115,9 +104,7 @@ def objective(trial):
 
     return score
 
-# -------------------------
-# RUN OPTIMIZATION
-# -------------------------
+
 
 print("Running Bayesian Optimization...")
 
@@ -131,3 +118,4 @@ with open("best_policy.json", "w") as f:
     json.dump(study.best_params, f)
 
 print("Best policy saved.")
+
