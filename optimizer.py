@@ -2,13 +2,12 @@ import optuna
 import numpy as np
 import json
 from sklearn.metrics import accuracy_score
-from dataset import small_dataset
+from dataset import dataset
 import ollama
 
 MODEL = "mistral"
 LAMBDA = 0.1
-N_TRIALS = 3
-
+N_TRIALS = 5
 
 
 def llama_generate(prompt):
@@ -19,6 +18,7 @@ def llama_generate(prompt):
     )
 
     return response["message"]["content"].strip()
+
 
 
 def compress_prompt(text, ratio, style, template):
@@ -37,7 +37,6 @@ Text:
     return llama_generate(prompt)
 
 
-
 def classify(text):
 
     prompt = f"""
@@ -53,16 +52,15 @@ Answer only label.
     return llama_generate(prompt)
 
 
-
 print("Computing baseline...")
 
 baseline_preds = []
 
-for item in small_dataset:
+for item in dataset:
     pred = classify(item["text"])
     baseline_preds.append(pred)
 
-true_labels = [item["label"] for item in small_dataset]
+true_labels = [item["label"] for item in dataset]
 baseline_acc = accuracy_score(true_labels, baseline_preds)
 
 print("Baseline Accuracy:", baseline_acc)
@@ -84,7 +82,7 @@ def objective(trial):
     preds = []
     compression_scores = []
 
-    for item in small_dataset:
+    for item in dataset:
 
         original = item["text"]
 
@@ -105,7 +103,6 @@ def objective(trial):
     return score
 
 
-
 print("Running Bayesian Optimization...")
 
 study = optuna.create_study(direction="maximize")
@@ -118,4 +115,3 @@ with open("best_policy.json", "w") as f:
     json.dump(study.best_params, f)
 
 print("Best policy saved.")
-
